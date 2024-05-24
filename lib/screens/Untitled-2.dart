@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  bool _showBottomNavigationBar = true;
+  bool showBottomNavigationBar = true;
 
   final List<Widget> screens = [
     const HomePageBody(),
@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _showBottomNavigationBar = true;
+      showBottomNavigationBar = true;
     });
   }
 
@@ -35,41 +35,44 @@ class _HomePageState extends State<HomePage> {
         index: _selectedIndex,
         children: screens,
       ),
-      bottomNavigationBar: _showBottomNavigationBar
-          ? BottomNavigationBar(
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.calculate),
-                  label: 'Interest',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.wallet),
-                  label: 'Assets',
-                ),
-              ],
-              onTap: _onItemTapped,
-              selectedItemColor: Colors.blue,
-              currentIndex: _selectedIndex,
-            )
-          : null,
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calculate),
+            label: 'Interest',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.wallet),
+            label: 'Assets',
+          ),
+        ],
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.blue,
+        currentIndex: _selectedIndex,
+      ),
     );
   }
 }
 
-class HomePageBody extends StatelessWidget {
+class HomePageBody extends StatefulWidget {
   const HomePageBody({super.key});
 
   @override
+  State<HomePageBody> createState() => _HomePageBodyState();
+}
+
+class _HomePageBodyState extends State<HomePageBody> {
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(15),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -86,15 +89,11 @@ class HomePageBody extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: () {
-                        (context as Element).markNeedsBuild();
-
-                        showModalBottomSheet(
+                        setState(() {});
+                        showBottomSheet(
                           context: context,
-                          isScrollControlled: true,
-                          builder: (context) => const CreateNotePage(),
-                        ).then((value) {
-                          (context as Element).markNeedsBuild();
-                        });
+                          builder: (context) => CreateNotePage(),
+                        );
                       },
                       icon: const Icon(Icons.add),
                     ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:promissorynotemanager/models/card.dart';
 import 'package:promissorynotemanager/screens/assets_page.dart';
 import 'package:promissorynotemanager/screens/create_note.dart';
 import 'package:promissorynotemanager/screens/interest_calculator.dart';
+// ... (your other imports: EventCard, InterestCalculatorPage, AssetsPage, CreateNotePage)
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  bool _showBottomNavigationBar = true;
+  bool _showBottomNavigationBar = true; // Track bottom nav bar visibility
 
   final List<Widget> screens = [
     const HomePageBody(),
@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _showBottomNavigationBar = true;
+      _showBottomNavigationBar = true; // Show when switching tabs
     });
   }
 
@@ -35,27 +35,28 @@ class _HomePageState extends State<HomePage> {
         index: _selectedIndex,
         children: screens,
       ),
-      bottomNavigationBar: _showBottomNavigationBar
+      bottomNavigationBar: _showBottomNavigationBar // Conditional rendering
           ? BottomNavigationBar(
               items: const [
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.calculate),
-                  label: 'Interest',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.wallet),
-                  label: 'Assets',
-                ),
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calculate),
+            label: 'Interest',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.wallet),
+            label: 'Assets',
+          ),
+                // ... (Your existing BottomNavigationBarItem code) ...
               ],
               onTap: _onItemTapped,
               selectedItemColor: Colors.blue,
               currentIndex: _selectedIndex,
             )
-          : null,
+          : null, // Hide when _showBottomNavigationBar is false
     );
   }
 }
@@ -71,10 +72,7 @@ class HomePageBody extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ClipOval(
+            ClipOval(
                   child: Image.asset(
                     'lib/assets/images/logo.jpg',
                     width: 44,
@@ -84,21 +82,23 @@ class HomePageBody extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    IconButton(
-                      onPressed: () {
-                        (context as Element).markNeedsBuild();
+                    IconButton( // "Add" button
+              onPressed: () {
+                // Hide the bottom navigation bar
+                (context as Element).markNeedsBuild(); // Trigger rebuild to hide bottom bar
 
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (context) => const CreateNotePage(),
-                        ).then((value) {
-                          (context as Element).markNeedsBuild();
-                        });
-                      },
-                      icon: const Icon(Icons.add),
-                    ),
-                    const SizedBox(width: 15),
+                // Show the bottom sheet
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true, // Allow the sheet to cover the nav bar
+                  builder: (context) => const CreateNotePage(),
+                ).then((value) { // Restore bottom bar after closing
+                  (context as Element).markNeedsBuild();
+                });
+              },
+              icon: const Icon(Icons.add),
+            ),
+                    
                     IconButton(
                       onPressed: () {},
                       icon: const Icon(Icons.notification_add),
@@ -128,9 +128,15 @@ class HomePageBody extends StatelessWidget {
                 itemBuilder: (context, index) => const EventCard(),
               ),
             ),
+          
+            // ... (Your existing header, search bar, and ListView.builder code)
+
+            
           ],
         ),
       ),
     );
   }
 }
+
+// ... (Your other widget classes: InterestCalculatorPage, AssetsPage, CreateNotePage, EventCard) ...

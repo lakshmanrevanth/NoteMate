@@ -1,124 +1,146 @@
 import 'package:flutter/material.dart';
 import 'package:promissorynotemanager/models/history.dart';
 
-class InterestCalculatorPage extends StatelessWidget {
+class InterestCalculatorPage extends StatefulWidget {
   const InterestCalculatorPage({super.key});
+
+  @override
+  State<InterestCalculatorPage> createState() => _InterestCalculatorPageState();
+}
+
+class _InterestCalculatorPageState extends State<InterestCalculatorPage> {
+  final _principalAmountController = TextEditingController();
+  final _interestRateController = TextEditingController();
+  final _fromDateController = TextEditingController();
+  final _tillDateController = TextEditingController();
+
+  void _clearFields() {
+    _principalAmountController.clear();
+    _interestRateController.clear();
+    _fromDateController.clear();
+    _tillDateController.clear();
+  }
+
+  @override
+  void dispose() {
+    _principalAmountController.dispose();
+    _interestRateController.dispose();
+    _fromDateController.dispose();
+    _tillDateController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Dark background color
-
-      body: SafeArea(
-        child: SingleChildScrollView(
-          // Allow scrolling if content overflows
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Interest Calculator',
-                  style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: Color.fromARGB(255, 0, 0, 0))),
-              const SizedBox(height: 20),
-              _buildTextField('Enter Principal Amount', '10000', Icons.money,
-                  TextInputType.phone),
-              const SizedBox(height: 20),
-              _buildTextField('Interest rate', '2rs', Icons.interests,
-                  TextInputType.number),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildTextField('From date', 'dd/mm/yy',
-                        Icons.calendar_today, TextInputType.datetime),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _buildTextField('Till date', 'dd/mm/yy',
-                        Icons.calendar_today, TextInputType.datetime),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 50),
-              Row(
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 219, 0, 0),
-                      minimumSize: const Size(50, 50), // Keep the same height
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius
-                            .zero, // Set borderRadius to zero for a square shape
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: const Text(
-                      "Clear",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 0, 157, 58),
-                      minimumSize: const Size(250, 50), // Keep the same height
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius
-                            .zero, // Set borderRadius to zero for a square shape
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: const Text(
-                      "Calculate",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 50),
-              const Text(
-                "History",
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w700,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text("Interest Calculator"),
+        automaticallyImplyLeading: false,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTextField('Enter Principal Amount', '₹', Icons.money,
+                TextInputType.number,
+                controller: _principalAmountController),
+            const SizedBox(height: 20),
+            _buildTextField(
+                'Interest Rate (%)', '%', Icons.percent, TextInputType.number,
+                controller: _interestRateController),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildTextField('From Date', 'dd/mm/yyyy',
+                      Icons.calendar_today, TextInputType.datetime,
+                      controller: _fromDateController),
                 ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              HistoryModel(),
-              HistoryModel(),
-              HistoryModel()
-            ],
-          ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _buildTextField('Till Date', 'dd/mm/yyyy',
+                      Icons.calendar_today, TextInputType.datetime,
+                      controller: _tillDateController),
+                ),
+              ],
+            ),
+            const SizedBox(height: 40),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: _clearFields,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[300],
+                    foregroundColor: Colors.black,
+                    fixedSize: const Size(150, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  child: const Text("Clear"),
+                ),
+                const SizedBox(width: 15),
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    fixedSize: const Size(150, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  child: const Text("Calculate",
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 40),
+            const Text(
+              "History",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            HistoryModel(
+                principalAmount: 200000,
+                interestRate: 2,
+                fromDate: DateTime.now(),
+                tillDate: DateTime.now(),
+                interestEarned: 20000),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildTextField(String label, String initialValue, IconData icon,
-      TextInputType keyboardType) {
-    return TextField(
+  Widget _buildTextField(
+    String label,
+    String suffixText,
+    IconData icon,
+    TextInputType keyboardType, {
+    required TextEditingController controller,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
       style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(color: Color.fromARGB(255, 8, 8, 8)),
-        hintText: initialValue,
-        hintStyle: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+        suffixText: suffixText,
+        suffixStyle: const TextStyle(color: Color.fromARGB(255, 8, 8, 8)),
         prefixIcon: Icon(icon, color: const Color.fromARGB(255, 0, 0, 0)),
         enabledBorder: const OutlineInputBorder(
-          borderSide:
-              BorderSide(color: Color.fromARGB(255, 0, 0, 0)), // White border
+          borderSide: BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.blue),
         ),
       ),
       keyboardType: keyboardType,
+      validator: validator,
     );
   }
 }
