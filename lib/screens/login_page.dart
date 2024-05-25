@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:promissorynotemanager/main.dart';
-import 'package:promissorynotemanager/screens/aunthentication_fail.dart';
+
 import 'package:promissorynotemanager/screens/home_page.dart';
 
 class LogInPage extends StatelessWidget {
@@ -11,7 +10,9 @@ class LogInPage extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: Color.fromRGBO(249, 249, 249, 1),
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? Theme.of(context).primaryColorDark
+          : const Color.fromRGBO(249, 249, 249, 1),
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -21,7 +22,9 @@ class LogInPage extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE0E0E0),
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Theme.of(context).primaryColorLight
+                        : const Color(0xFFE0E0E0),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   padding: const EdgeInsets.all(30),
@@ -44,7 +47,9 @@ class LogInPage extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: screenSize.width * 0.05,
-                    color: Colors.grey[600],
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Theme.of(context).primaryColorLight
+                        : Colors.grey[600],
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -52,7 +57,10 @@ class LogInPage extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
+                      backgroundColor:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Theme.of(context).primaryColor
+                              : Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 18),
                       textStyle: TextStyle(fontSize: screenSize.width * 0.045),
                     ),
@@ -60,7 +68,7 @@ class LogInPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomePage(),
+                          builder: (context) => const HomePage(),
                         ),
                       );
                     },
@@ -69,12 +77,16 @@ class LogInPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Made with Flutter"),
-                    SizedBox(width: 5),
-                    Icon(Icons.favorite, color: Colors.black, size: 16),
+                    const Text("Made with Flutter"),
+                    const SizedBox(width: 5),
+                    Icon(Icons.favorite,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Theme.of(context).primaryColorLight
+                            : Colors.black,
+                        size: 16),
                   ],
                 ),
               ],

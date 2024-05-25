@@ -15,7 +15,7 @@ class AuthenticationFail extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.close, size: 50, color: Colors.black),
+              const Icon(Icons.close, size: 50, color: Colors.black),
               const SizedBox(height: 20),
               Text(
                 "Authentication failed",

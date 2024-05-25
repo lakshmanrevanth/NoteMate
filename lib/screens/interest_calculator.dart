@@ -33,7 +33,9 @@ class _InterestCalculatorPageState extends State<InterestCalculatorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? Theme.of(context).primaryColor
+          : Colors.white,
       appBar: AppBar(
         title: const Text("Interest Calculator"),
         automaticallyImplyLeading: false,
@@ -125,15 +127,30 @@ class _InterestCalculatorPageState extends State<InterestCalculatorPage> {
   }) {
     return TextFormField(
       controller: controller,
-      style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+      style: TextStyle(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Theme.of(context).primaryColorLight
+              : const Color.fromARGB(255, 0, 0, 0)),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color.fromARGB(255, 8, 8, 8)),
+        labelStyle: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Theme.of(context).primaryColorLight
+                : const Color.fromARGB(255, 8, 8, 8)),
         suffixText: suffixText,
-        suffixStyle: const TextStyle(color: Color.fromARGB(255, 8, 8, 8)),
-        prefixIcon: Icon(icon, color: const Color.fromARGB(255, 0, 0, 0)),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
+        suffixStyle: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Theme.of(context).primaryColorLight
+                : const Color.fromARGB(255, 8, 8, 8)),
+        prefixIcon: Icon(icon,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Theme.of(context).primaryColorLight
+                : const Color.fromARGB(255, 0, 0, 0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Theme.of(context).primaryColorLight
+                  : const Color.fromARGB(255, 0, 0, 0)),
         ),
         focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.blue),
