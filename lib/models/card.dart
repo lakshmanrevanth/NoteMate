@@ -1,10 +1,27 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:promissorynotemanager/screens/create_note.dart';
+import 'package:intl/intl.dart';
+import 'package:promissorynotemanager/data/note_data.dart';
+
 import 'package:promissorynotemanager/screens/details_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class NewCard extends StatefulWidget {
-  const NewCard({Key? key}) : super(key: key);
+  final name;
+  final principalamount;
+  final DateTime fromdate;
+  final List<File> images;
+  final NoteData noteData;
+
+  const NewCard(
+      {Key? key,
+      required this.name,
+      required this.fromdate,
+      required this.principalamount,
+      required this.images,
+      required this.noteData})
+      : super(key: key);
 
   @override
   State<NewCard> createState() => _NewCardState();
@@ -19,12 +36,12 @@ class _NewCardState extends State<NewCard> {
     return GestureDetector(
       onTap: () {
         showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) => const DetailsPage(),
-              ).then((value) {
-                setState(() {});
-              });
+          context: context,
+          isScrollControlled: true,
+          builder: (context) => DetailsPage(noteData: widget.noteData,),
+        ).then((value) {
+          setState(() {});
+        });
       },
       child: Container(
         width: cardWidth,
@@ -45,18 +62,22 @@ class _NewCardState extends State<NewCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Nagasrinivasarao",
+                        widget.noteData.name,
                         style: GoogleFonts.robotoMono(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      _buildDetailRow("Amount:", "₹10,000",
+                      _buildDetailRow("Amount:", "₹${widget.noteData.principalAmount}",
                           context), // Format amount with comma
-                      _buildDetailRow("Interest:", "2 rs", context),
+                      _buildDetailRow("Interest:", "${widget.noteData.interestRate} (Rs)", context),
+
                       _buildDetailRow(
-                          "Date:", "12/05/2023", context), // Added status
+                          "Date:",
+                          DateFormat('dd/MM/yyyy')
+                              .format(widget.noteData.date), // Format the date
+                          context), // Added status
                     ],
                   ),
                 ),
@@ -67,11 +88,18 @@ class _NewCardState extends State<NewCard> {
                   child: ClipRRect(
                     // Clip to match card's rounded corners
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
-                      'lib/assets/images/logo.jpg',
-                      height: 100, // Fixed height for the image
-                      fit: BoxFit.cover,
-                    ),
+                    child: widget.images.isNotEmpty // Check if there are images
+                        ? Image.file(
+                            widget.noteData.images[0], // Use the first image
+                            height: 100,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset(
+                            // Use a placeholder image if the list is empty
+                            'lib/assets/images/logo.jpg',
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
               ],

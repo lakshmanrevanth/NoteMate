@@ -1,12 +1,58 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:promissorynotemanager/data/note_data.dart';
 
-class CreateNotePage extends StatelessWidget {
-  const CreateNotePage({super.key});
+class CreateNotePage extends StatefulWidget {
+  final Function(NoteData) onAddNote;
+  const CreateNotePage({super.key, required this.onAddNote});
+  @override
+  State<CreateNotePage> createState() => _CreateNotePageState();
+}
+
+class _CreateNotePageState extends State<CreateNotePage> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _principalAmountController = TextEditingController();
+  final _interestRateController = TextEditingController();
+  final _fromDateController = TextEditingController();
+  List<File>? _selectedimages = [];
+  void _clearFields() {
+    _nameController.clear();
+    _principalAmountController.clear();
+    _interestRateController.clear();
+    _fromDateController.clear();
+  }
+
+  @override
+  void dispose() {
+    _principalAmountController.dispose();
+    _interestRateController.dispose();
+    _fromDateController.dispose();
+    super.dispose();
+  }
+
+  void _saveNote() {
+    // if (_formKey.currentState!.validate()) {
+      final noteData = NoteData(
+        name: _nameController.text,
+        principalAmount: double.parse(_principalAmountController.text),
+        interestRate: double.parse(_interestRateController.text),
+        date: DateFormat('dd/MM/yyyy').parse(_fromDateController.text),
+        images: _selectedimages!,
+      );
+      widget.onAddNote(noteData); // Call the callback to pass data to HomePage
+
+      // Close the bottom sheet or navigate back to HomePage
+      Navigator.pop(context);
+    // }
+  }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 600,
+      height: 800,
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.all(18.0),
@@ -25,7 +71,7 @@ class CreateNotePage extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: _clearFields,
                   child: const Text(
                     "Clear",
                     style: TextStyle(
@@ -36,9 +82,10 @@ class CreateNotePage extends StatelessWidget {
                 ),
               ],
             ),
-            const TextField(
+            TextField(
+              controller: _nameController,
               keyboardType: TextInputType.name,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 label: Text("Enter Name"),
                 hintText: "Name",
               ),
@@ -46,26 +93,28 @@ class CreateNotePage extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            const Row(
+            Row(
               children: [
                 Expanded(
                   flex: 2,
                   child: TextField(
+                    controller: _principalAmountController,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       label: Text("Enter Principal Amount"),
                       hintText: "100000",
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Expanded(
                   flex: 1,
                   child: TextField(
+                    controller: _interestRateController,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       label: Text("Interest Rate"),
                       hintText: "In rupees",
                     ),
@@ -91,11 +140,12 @@ class CreateNotePage extends StatelessWidget {
                 const SizedBox(
                   width: 15,
                 ),
-                const Expanded(
+                Expanded(
                   flex: 2,
                   child: TextField(
+                    controller: _fromDateController,
                     keyboardType: TextInputType.datetime,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: "dd/mm/yyyy",
                     ),
                   ),
@@ -111,7 +161,9 @@ class CreateNotePage extends StatelessWidget {
                 backgroundColor: const Color(0xFF8B3DFF),
                 shape: const RoundedRectangleBorder(),
               ),
-              onPressed: () {},
+              onPressed: () {
+                _imagePickingFromGallery();
+              },
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -132,29 +184,31 @@ class CreateNotePage extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: const RoundedRectangleBorder(),
-              ),
-              onPressed: () {},
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Image Name',
-                    style: TextStyle(
-                      fontSize: 16,
+            _selectedimages != null
+                ? Expanded(
+                    child: GridView.builder(
+                      scrollDirection: Axis.horizontal,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                      ),
+                      itemCount: _selectedimages!.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            _showFullScreenImage(_selectedimages![index]);
+                          },
+                          child: Image.file(
+                            _selectedimages![index],
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      },
                     ),
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Icon(
-                    Icons.cancel,
-                  ),
-                ],
-              ),
-            ),
+                  )
+                : const Text("Please select images"),
             const Expanded(
               child: SizedBox(),
             ),
@@ -166,7 +220,9 @@ class CreateNotePage extends StatelessWidget {
                   backgroundColor:
                       WidgetStateColor.resolveWith((states) => Colors.green),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  _saveNote();
+                },
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -190,6 +246,47 @@ class CreateNotePage extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _imagePickingFromGallery() async {
+    try {
+      final List<XFile>? pickedImages = await ImagePicker().pickMultiImage();
+      if (pickedImages != null) {
+        setState(() {
+          _selectedimages = pickedImages.map((e) => File(e.path)).toList();
+        });
+      }
+    } catch (e) {
+      print('Error picking images: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking images: $e')),
+      );
+    }
+  }
+
+  void _clearImageFields() {
+    setState(() {
+      _selectedimages!.clear();
+    });
+  }
+
+  void _showFullScreenImage(File imageFile) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.all(10),
+        child: GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: Center(
+            child: Image.file(
+              imageFile,
+              fit: BoxFit.contain,
+            ),
+          ),
         ),
       ),
     );

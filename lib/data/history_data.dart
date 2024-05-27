@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+
 
 class HistoryData {
   final int principalAmount;
@@ -23,7 +23,7 @@ class HistoryData {
     required DateTime tillDate,
   }) {
     // Your interest calculation logic here
-    final interest = 0;
+    const interest = 0;
 
     return HistoryData(
       principalAmount: principalAmount,
