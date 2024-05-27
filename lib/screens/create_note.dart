@@ -164,7 +164,7 @@ class CreateNotePage extends StatelessWidget {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
-                      MaterialStateColor.resolveWith((states) => Colors.green),
+                      WidgetStateColor.resolveWith((states) => Colors.green),
                 ),
                 onPressed: () {},
                 child: const Row(

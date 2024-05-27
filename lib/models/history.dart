@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Import for date formatting
+import 'package:intl/intl.dart';
+import 'package:promissorynotemanager/data/history_data.dart'; // Import for date formatting
+import 'package:url_launcher/url_launcher.dart';
 
 class HistoryModel extends StatelessWidget {
-  final int principalAmount; // Assuming you have data for these
-  final double interestRate;
-  final DateTime fromDate;
-  final DateTime tillDate;
-  final int interestEarned; // Or calculate it here
-
+  final HistoryData historyData;
   const HistoryModel({
     super.key,
-    required this.principalAmount,
-    required this.interestRate,
-    required this.fromDate,
-    required this.tillDate,
-    required this.interestEarned,
+    required this.historyData,
   });
 
   @override
   Widget build(BuildContext context) {
-    final formattedFromDate = DateFormat('dd MMM yyyy').format(fromDate);
-    final formattedTillDate = DateFormat('dd MMM yyyy').format(tillDate);
+    final pertoint = historyData.interestRate / 12;
+    final formattedFromDate =
+        DateFormat('dd MMM yyyy').format(historyData.fromDate);
+    final formattedTillDate =
+        DateFormat('dd MMM yyyy').format(historyData.tillDate);
 
     return Card(
       elevation: 2, // Add a subtle shadow
@@ -31,15 +27,17 @@ class HistoryModel extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildRow('Principal Amount:', '₹${principalAmount.toString()}'),
-            _buildRow('Interest Rate:', '${interestRate.toStringAsFixed(2)}%'),
+            _buildRow('Principal Amount:',
+                '₹${historyData.principalAmount.toString()}'),
+            _buildRow('Interest Rate:', '${pertoint}rs'),
             _buildRow('From Date:', formattedFromDate),
             _buildRow('Till Date:', formattedTillDate),
-            _buildRow('Duration:', _calculateDuration(fromDate, tillDate)),
-            _buildRow('Interest:', '₹${interestEarned.toString()}'),
+            _buildRow('Duration:',
+                _calculateDuration(historyData.fromDate, historyData.tillDate)),
+            _buildRow('Interest:', '₹${historyData.interestEarned.toString()}'),
             const Divider(color: Colors.grey), // Add a divider
             _buildRow('Total Amount:',
-                '₹${(principalAmount + interestEarned).toString()}',
+                '₹${(historyData.principalAmount + historyData.interestEarned).toString()}',
                 isTotal: true),
           ],
         ),
