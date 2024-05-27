@@ -5,7 +5,6 @@ import 'package:promissorynotemanager/screens/create_note.dart';
 import 'package:promissorynotemanager/screens/drawer_page.dart';
 import 'package:promissorynotemanager/screens/interest_calculator.dart';
 import 'package:promissorynotemanager/screens/notification_page.dart';
-import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

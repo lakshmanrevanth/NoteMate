@@ -8,8 +8,8 @@ import 'package:promissorynotemanager/screens/details_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class NewCard extends StatefulWidget {
-  final name;
-  final principalamount;
+  final String name;
+  final double principalamount;
   final DateTime fromdate;
   final List<File> images;
   final NoteData noteData;
@@ -38,7 +38,9 @@ class _NewCardState extends State<NewCard> {
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
-          builder: (context) => DetailsPage(noteData: widget.noteData,),
+          builder: (context) => DetailsPage(
+            noteData: widget.noteData,
+          ),
         ).then((value) {
           setState(() {});
         });
@@ -69,9 +71,12 @@ class _NewCardState extends State<NewCard> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      _buildDetailRow("Amount:", "₹${widget.noteData.principalAmount}",
+                      _buildDetailRow(
+                          "Amount:",
+                          "₹${widget.noteData.principalAmount}",
                           context), // Format amount with comma
-                      _buildDetailRow("Interest:", "${widget.noteData.interestRate} (Rs)", context),
+                      _buildDetailRow("Interest:",
+                          "${widget.noteData.interestRate} (Rs)", context),
 
                       _buildDetailRow(
                           "Date:",

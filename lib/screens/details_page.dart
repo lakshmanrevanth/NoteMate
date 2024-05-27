@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:promissorynotemanager/data/note_data.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:carousel_slider/carousel_controller.dart';
 import 'package:photo_view/photo_view.dart';
 
 class DetailsPage extends StatelessWidget {
@@ -15,7 +14,7 @@ class DetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Correct Calculation of Interest
-    Widget _buildImagePreview(File imageFile) {
+    Widget buildImagePreview(File imageFile) {
       return GestureDetector(
         onTap: () {
           showDialog(
@@ -49,7 +48,7 @@ class DetailsPage extends StatelessWidget {
       );
     }
 
-    double _calculateInterest() {
+    double calculateInterest() {
       double principal = double.parse(noteData.principalAmount.toString());
       double rate = double.parse(noteData.interestRate.toString()) * 12 / 100;
       DateTime fromDate = noteData.date;
@@ -60,7 +59,7 @@ class DetailsPage extends StatelessWidget {
       return interest;
     }
 
-    String _calculateDuration(DateTime fromDate, DateTime tillDate) {
+    String calculateDuration(DateTime fromDate, DateTime tillDate) {
       final difference = tillDate.difference(fromDate);
       return '${difference.inDays ~/ 365} years ${(difference.inDays % 365) ~/ 30} months';
     }
@@ -84,7 +83,7 @@ class DetailsPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildDetailRow("Name", "${noteData.name}", context),
+                    _buildDetailRow("Name", noteData.name, context),
                     _buildDetailRow("Principal Amount",
                         "₹${noteData.principalAmount}", context),
                     _buildDetailRow("Interest Rate",
@@ -101,18 +100,18 @@ class DetailsPage extends StatelessWidget {
                         height: 20), // Additional spacing before total
                     _buildDetailRow(
                         "Duration: ",
-                        _calculateDuration(noteData.date, DateTime.now()),
+                        calculateDuration(noteData.date, DateTime.now()),
                         context),
                     _buildDetailRow(
                       "Interest",
-                      "₹${_calculateInterest().toStringAsFixed(2)}",
+                      "₹${calculateInterest().toStringAsFixed(2)}",
                       context,
                       isSecondary: true,
                     ), // Interest in secondary style
                     const SizedBox(height: 10),
                     _buildDetailRow(
                         "Total Amount",
-                        "₹${(noteData.principalAmount + _calculateInterest()).toStringAsFixed(2)}",
+                        "₹${(noteData.principalAmount + calculateInterest()).toStringAsFixed(2)}",
                         context,
                         isTotal: true), // Total in primary style
                   ],
@@ -143,7 +142,7 @@ class DetailsPage extends StatelessWidget {
                         viewportFraction: 0.8,
                       ),
                       items: noteData.images.map((image) {
-                        return _buildImagePreview(image);
+                        return buildImagePreview(image);
                       }).toList(),
                     ),
                   ),

@@ -12,7 +12,6 @@ class CreateNotePage extends StatefulWidget {
 }
 
 class _CreateNotePageState extends State<CreateNotePage> {
-  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _principalAmountController = TextEditingController();
   final _interestRateController = TextEditingController();
@@ -253,32 +252,31 @@ class _CreateNotePageState extends State<CreateNotePage> {
 
   Future<void> _imagePickingFromGallery() async {
     try {
-      final List<XFile>? pickedImages = await ImagePicker().pickMultiImage();
-      if (pickedImages != null) {
-        setState(() {
-          _selectedimages = pickedImages.map((e) => File(e.path)).toList();
-        });
-      }
-    } catch (e) {
-      print('Error picking images: $e');
+      final List<XFile> pickedImages = await ImagePicker().pickMultiImage();
+      setState(() {
+        _selectedimages = pickedImages.map((e) => File(e.path)).toList();
+      });
+        } catch (e) {
+      
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error picking images: $e')),
       );
     }
   }
 
-  void _clearImageFields() {
-    setState(() {
-      _selectedimages!.clear();
-    });
-  }
+  // void _clearImageFields() {
+  //   setState(() {
+  //     _selectedimages!.clear();
+  //   });
+  // }
 
   void _showFullScreenImage(File imageFile) {
     showDialog(
       context: context,
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
-        insetPadding: EdgeInsets.all(10),
+        insetPadding: const EdgeInsets.all(10),
         child: GestureDetector(
           onTap: () => Navigator.of(context).pop(),
           child: Center(
