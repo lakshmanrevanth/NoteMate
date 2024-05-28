@@ -27,7 +27,6 @@ class _HomePageState extends State<HomePage> {
 
   void _addNote(NoteData noteData) {
     setState(() {
-      // Add noteData to your existing list of cards or however you're storing the data
       _notes.add(noteData);
     });
   }
@@ -145,8 +144,9 @@ class _HomePageBodyState extends State<HomePageBody> {
         ),
         SliverList(
           delegate: SliverChildBuilderDelegate(
-            (context, index) =>  Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+            (context, index) => Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
               child: NewCard(
                 name: widget.notes[index].name,
                 principalamount: widget.notes[index].principalAmount,
