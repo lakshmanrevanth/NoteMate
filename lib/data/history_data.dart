@@ -1,5 +1,3 @@
-
-
 class HistoryData {
   final int principalAmount;
   final double interestRate;

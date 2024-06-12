@@ -1,8 +1,13 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:promissorynotemanager/data/note_data.dart';
+import 'package:promissorynotemanager/dataprovider/authprovider.dart'
+    as authprovider;
+import 'package:provider/provider.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class CreateNotePage extends StatefulWidget {
   final Function(NoteData) onAddNote;
@@ -32,20 +37,100 @@ class _CreateNotePageState extends State<CreateNotePage> {
     super.dispose();
   }
 
-  void _saveNote() {
-    // if (_formKey.currentState!.validate()) {
+  double calculateInterest(
+      double principalAmount, double interestRate, DateTime fromDate) {
+    double rate = interestRate * 12 / 100;
+    DateTime tillDate =
+        DateTime.now(); // Or use noteData.tillDate if you have it
+    int durationInDays = tillDate.difference(fromDate).inDays;
+    double durationInYears = durationInDays / 365;
+    double interest = (principalAmount * rate * durationInYears);
+    return interest;
+  }
+
+  String calculateDuration(DateTime fromDate, DateTime tillDate) {
+    final difference = tillDate.difference(fromDate);
+    return '${difference.inDays ~/ 365} years ${(difference.inDays % 365) ~/ 30} months';
+  }
+
+  void _saveNote() async {
+    final authProvider =
+        Provider.of<authprovider.AuthProvider>(context, listen: false);
+
+    if (authProvider.user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please log in first')),
+      );
+      return;
+    }
+
+    try {
+      List<String> imageUrls = [];
+      if (_selectedimages != null) {
+        for (var image in _selectedimages!) {
+          final ref = firebase_storage.FirebaseStorage.instance.ref().child(
+              'notes/${authProvider.user!.uid}/${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}');
+          await ref.putFile(image);
+          final url = await ref.getDownloadURL();
+          imageUrls.add(url);
+        }
+      }
+
+      DateTime fromDate = _fromDateController.text != ''
+          ? DateFormat('dd/MM/yyyy').parse(_fromDateController.text)
+          : DateTime.now();
+      DateTime tillDate =
+          DateTime.now(); // Assuming you want tillDate to be the current time
+
+      String durationText = calculateDuration(fromDate, tillDate);
+
+      // Parse and validate principal and interest rate
+      double principalAmount =
+          double.tryParse(_principalAmountController.text) ?? 0.0;
+      double interestRate =
+          double.tryParse(_interestRateController.text) ?? 0.0;
+
+      // Check if either principalAmount or interestRate is zero
+      if (principalAmount == 0.0 || interestRate == 0.0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Principal or interest rate cannot be zero')),
+        );
+        return;
+      }
+
+      double calculatedInterest =
+          calculateInterest(principalAmount, interestRate, fromDate);
+      double totalAmount = principalAmount + calculatedInterest;
+
       final noteData = NoteData(
         name: _nameController.text,
-        principalAmount: double.parse(_principalAmountController.text),
-        interestRate: double.parse(_interestRateController.text),
-        date: DateFormat('dd/MM/yyyy').parse(_fromDateController.text),
-        images: _selectedimages!,
+        principalAmount: principalAmount,
+        interestRate: interestRate,
+        fromDate: fromDate,
+        duration: durationText,
+        imageUrls: imageUrls,
+        interest: calculatedInterest,
+        totalAmount: totalAmount,
+        tillDate: tillDate,
       );
-      widget.onAddNote(noteData); // Call the callback to pass data to HomePage
 
-      // Close the bottom sheet or navigate back to HomePage
-      Navigator.pop(context);
-    // }
+      final userNotesCollection = FirebaseFirestore.instance
+          .collection('users')
+          .doc(authProvider.user!.uid)
+          .collection('notes');
+      await userNotesCollection.add(noteData.toMap()); // Convert to Map
+      widget.onAddNote(noteData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Note saved successfully")),
+      );
+      Navigator.pop(context); // Close the bottom sheet
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error saving note: $e")),
+      );
+    }
   }
 
   @override
@@ -256,8 +341,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
       setState(() {
         _selectedimages = pickedImages.map((e) => File(e.path)).toList();
       });
-        } catch (e) {
-      
+    } catch (e) {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error picking images: $e')),

@@ -1,44 +1,55 @@
+import 'package:promissorynotemanager/dataprovider/authprovider.dart'
+    as authprovider;
 import 'package:flutter/material.dart';
+import 'package:promissorynotemanager/dataprovider/themeprovider.dart';
+
+import 'package:promissorynotemanager/screens/home_page.dart';
 import 'package:promissorynotemanager/screens/login_page.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:promissorynotemanager/firebase_options.dart';
 
-// 1. Create a ThemeProvider to manage the theme state
-class ThemeProvider with ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.system;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const PromissoryNoteManagerApp());
+}
 
-  ThemeMode get themeMode => _themeMode;
+class PromissoryNoteManagerApp extends StatelessWidget {
+  const PromissoryNoteManagerApp({super.key});
 
-  bool get isDarkMode =>
-      _themeMode == ThemeMode.dark; // Added convenience getter
-
-  void toggleTheme() {
-    _themeMode = isDarkMode ? ThemeMode.light : ThemeMode.dark;
-    notifyListeners();
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => authprovider.AuthProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
+      child: const _AppContent(),
+    );
   }
 }
 
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
-      child: const MyApp(),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class _AppContent extends StatelessWidget {
+  const _AppContent({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
-      // Access the ThemeProvider
       builder: (context, themeProvider, child) {
         return MaterialApp(
           themeMode: themeProvider.themeMode,
           theme: ThemeData.light(),
           darkTheme: ThemeData.dark(),
-          home: const LogInPage(),
+          home: Consumer<authprovider.AuthProvider>(
+            builder: (context, authProvider, child) {
+              return authProvider.user != null
+                  ? const HomePage()
+                  : const LogInPage();
+            },
+          ),
         );
       },
     );

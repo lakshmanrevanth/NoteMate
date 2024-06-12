@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "20433148762",
+    "project_id": "promissorynotemanager",
+    "storage_bucket": "promissorynotemanager.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:20433148762:android:d8130379e990556ae8f163",
+        "android_client_info": {
+          "package_name": "com.example.promissorynotemanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "20433148762-9716bs27eceqpeusan0isi0tomhsel6i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.promissorynotemanager",
+            "certificate_hash": "84ebf4a85359e7135eedb48c1f5451ba0c1e7cf7"
+          }
+        },
+        {
+          "client_id": "20433148762-bqs8vfkmb6fui5l1b4b6t1t7v0vhu7bk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiao8ofOPBYLyPdIxqOd6QO2ddlmXT2dA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "20433148762-bqs8vfkmb6fui5l1b4b6t1t7v0vhu7bk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

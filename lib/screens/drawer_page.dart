@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:promissorynotemanager/dataprovider/authprovider.dart'
+    as authprovider;
 import 'package:promissorynotemanager/screens/assets_page.dart';
+import 'package:promissorynotemanager/screens/login_page.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:promissorynotemanager/screens/interest_calculator.dart';
 import 'package:promissorynotemanager/screens/settings.dart';
@@ -13,44 +17,53 @@ class DrawerPage extends StatefulWidget {
 class _DrawerPageState extends State<DrawerPage> {
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<authprovider.AuthProvider>(context);
     return Column(
       children: [
         Expanded(
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Theme.of(context).primaryColorLight
-                      : const Color.fromARGB(255, 225, 225, 225),
-                ),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundImage: AssetImage(
-                        'lib/assets/images/logo.jpg',
+              Container(
+                height: 250,
+                child: DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Theme.of(context).primaryColorLight
+                        : const Color.fromARGB(255, 225, 225, 225),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundImage: authProvider.profilePictureUrl != null
+                            ? NetworkImage(authProvider.profilePictureUrl!)
+                            : null, // Use NetworkImage with the URL
+                        child: authProvider.profilePictureUrl == null
+                            ? const Icon(Icons.person) // Placeholder icon
+                            : null,
                       ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      'R. Naga Srinivasa Rao',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                      const SizedBox(height: 10),
+                      Text(
+                        '${authProvider.user?.displayName}',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'nagasrinivasarao@gmail.com',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
+                      const SizedBox(height: 10),
+                      Text(
+                        '${authProvider.user?.email}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               ListTile(
@@ -108,7 +121,17 @@ class _DrawerPageState extends State<DrawerPage> {
         ListTile(
           leading: const Icon(Icons.logout, color: Colors.red),
           title: const Text('Logout', style: TextStyle(color: Colors.red)),
-          onTap: () {},
+          onTap: () async {
+            await authProvider.signOut();
+            // After sign-out, navigate back to LoginPage
+            if (!mounted) return; // Check if the widget is still mounted
+            Navigator.pushAndRemoveUntil(
+              // Replace navigation stack
+              context,
+              MaterialPageRoute(builder: (context) => const LogInPage()),
+              (route) => false, // Remove all previous routes
+            );
+          },
         ),
       ],
     );

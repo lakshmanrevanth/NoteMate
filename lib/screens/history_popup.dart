@@ -9,7 +9,6 @@ class HistoryPopUp {
         DateFormat('dd MMM yyyy').format(historyData.fromDate);
     final formattedTillDate =
         DateFormat('dd MMM yyyy').format(historyData.tillDate);
-
     showDialog(
       context: context,
       builder: (BuildContext context) {

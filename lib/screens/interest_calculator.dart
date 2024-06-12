@@ -67,7 +67,6 @@ class _InterestCalculatorPageState extends State<InterestCalculatorPage> {
             : Colors.white,
         appBar: AppBar(
           title: const Text("Interest Calculator"),
-          automaticallyImplyLeading: false,
         ),
         body: CustomScrollView(
           slivers: [

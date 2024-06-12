@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
-
 import 'package:promissorynotemanager/screens/home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:promissorynotemanager/dataprovider/authprovider.dart'
+    as authprovider;
+import 'package:provider/provider.dart';
 
-class LogInPage extends StatelessWidget {
+class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
 
   @override
+  State<LogInPage> createState() => _LogInPageState();
+}
+
+class _LogInPageState extends State<LogInPage> {
+  @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<authprovider.AuthProvider>(context);
+
+// Now you can access:
+    bool isLoggedIn = authProvider.user != null;
     final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -64,13 +76,19 @@ class LogInPage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 18),
                       textStyle: TextStyle(fontSize: screenSize.width * 0.045),
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomePage(),
-                        ),
-                      );
+                    onPressed: () async {
+                      UserCredential? userCredential =
+                          await authProvider.signInWithGoogle();
+                      if (userCredential != null) {
+                        print("Navigating to HomePage.");
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const HomePage()),
+                        );
+                      } else {
+                        print("Sign-in failed, not navigating.");
+                      }
                     },
                     child: const Text("Continue with Google",
                         style: TextStyle(color: Colors.white)),
