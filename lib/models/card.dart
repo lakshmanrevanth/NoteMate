@@ -58,7 +58,11 @@ class _NewCardState extends State<NewCard> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = screenWidth * 0.9; // 80% of screen width
-
+    if (noteData == null) {
+      return const Center(
+        child: SizedBox(),
+      ); // Show loading indicator while fetching
+    }
     return GestureDetector(
       onTap: () {
         showModalBottomSheet(
