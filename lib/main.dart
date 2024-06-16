@@ -14,7 +14,12 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const PromissoryNoteManagerApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: const PromissoryNoteManagerApp(),
+    ),
+  );
 }
 
 class PromissoryNoteManagerApp extends StatelessWidget {
@@ -33,16 +38,17 @@ class PromissoryNoteManagerApp extends StatelessWidget {
 }
 
 class _AppContent extends StatelessWidget {
-  const _AppContent({super.key});
+  const _AppContent();
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return MaterialApp(
-          themeMode: themeProvider.themeMode,
           theme: ThemeData.light(),
           darkTheme: ThemeData.dark(),
+          themeMode:
+              themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
           home: Consumer<authprovider.AuthProvider>(
             builder: (context, authProvider, child) {
               return authProvider.user != null

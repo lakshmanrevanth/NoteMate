@@ -11,11 +11,11 @@ class HistoryModel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final principalAmount = historyData.principalAmount ?? 0.0;
-    final interestRate = historyData.interestRate ?? 0.0;
-    final interestEarned = historyData.interestEarned ?? 0.0;
-    final fromDate = historyData.fromDate ?? DateTime.now();
-    final tillDate = historyData.tillDate ?? DateTime.now();
+    final principalAmount = historyData.principalAmount;
+    final interestRate = historyData.interestRate;
+    final interestEarned = historyData.interestEarned;
+    final fromDate = historyData.fromDate;
+    final tillDate = historyData.tillDate;
     final duration = _calculateDuration(fromDate, tillDate);
 
     final pertoint = interestRate / 12 * 100;

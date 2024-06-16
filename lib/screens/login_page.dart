@@ -18,7 +18,7 @@ class _LogInPageState extends State<LogInPage> {
     final authProvider = Provider.of<authprovider.AuthProvider>(context);
 
 // Now you can access:
-    bool isLoggedIn = authProvider.user != null;
+
     final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -80,8 +80,8 @@ class _LogInPageState extends State<LogInPage> {
                       UserCredential? userCredential =
                           await authProvider.signInWithGoogle();
                       if (userCredential != null) {
-                        print("Navigating to HomePage.");
                         Navigator.pushReplacement(
+                          // ignore: use_build_context_synchronously
                           context,
                           MaterialPageRoute(
                               builder: (context) => const HomePage()),

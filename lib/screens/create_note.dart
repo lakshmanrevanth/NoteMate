@@ -97,9 +97,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
                   break;
                 // ... handle other states ...
                 case firebase_storage.TaskState.canceled:
-                // TODO: Handle this case.
                 case firebase_storage.TaskState.error:
-                // TODO: Handle this case.
               }
             });
 

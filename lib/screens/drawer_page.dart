@@ -3,6 +3,7 @@ import 'package:promissorynotemanager/dataprovider/authprovider.dart'
     as authprovider;
 import 'package:promissorynotemanager/screens/assets_page.dart';
 import 'package:promissorynotemanager/screens/login_page.dart';
+import 'package:promissorynotemanager/screens/test.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:promissorynotemanager/screens/interest_calculator.dart';
@@ -137,6 +138,25 @@ class _DrawerPageState extends State<DrawerPage> {
     );
   }
 
+  Future<void> _launchUrl(Uri url) async {
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        // Fallback option: show a snackbar with the URL to copy
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not launch URL: $url')),
+        );
+      }
+    } catch (e) {
+      // Show a general error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('An error occurred while launching the URL.')),
+      );
+    }
+  }
+
   Future openDialog() => showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -174,9 +194,7 @@ class _DrawerPageState extends State<DrawerPage> {
                 // Make GitHub link tappable
                 onTap: () async {
                   final url = Uri.parse('https://github.com/lakshmanrevanth');
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                  }
+                  await _launchUrl(url); // Use _launchUrl here
                 },
                 child: const Text(
                   'GitHub Profile',
@@ -201,9 +219,7 @@ class _DrawerPageState extends State<DrawerPage> {
                       scheme: 'mailto',
                       path:
                           'lakshman6668@gmail.com'); // Replace with your email
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                  }
+                  await _launchUrl(url); // Use _launchUrl here
                 },
                 child: const Text(
                   'lakshman6668@gmail.com',

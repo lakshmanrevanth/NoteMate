@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:promissorynotemanager/data/history_data.dart';
 import 'package:google_fonts/google_fonts.dart'; // Add google_fonts package
 import 'package:intl/intl.dart';
-import 'package:promissorynotemanager/data/note_data.dart';
+
 import 'package:share_plus/share_plus.dart';
 
 class HistoryPopUp {
@@ -120,10 +120,5 @@ class HistoryPopUp {
         ],
       ),
     );
-  }
-
-  String _calculateDuration(DateTime fromDate, DateTime tillDate) {
-    final difference = tillDate.difference(fromDate);
-    return '${difference.inDays ~/ 365} years ${(difference.inDays % 365) ~/ 30} months';
   }
 }
