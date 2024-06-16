@@ -144,6 +144,7 @@ class HomePageBody extends StatefulWidget {
 }
 
 class _HomePageBodyState extends State<HomePageBody> {
+  String _searchQuery = '';
   @override
   void initState() {
     super.initState();
@@ -230,7 +231,11 @@ class _HomePageBodyState extends State<HomePageBody> {
                                   ? Theme.of(context).primaryColorDark
                                   : Colors.grey[200],
                         ),
-                        onChanged: (value) {},
+                        onChanged: (value) {
+                          setState(() {
+                            _searchQuery = value;
+                          });
+                        },
                       ),
                       const SizedBox(height: 15),
                     ],
@@ -240,16 +245,31 @@ class _HomePageBodyState extends State<HomePageBody> {
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
-                    final noteData = noteProvider.notes[index];
+                    // Filter notes based on the search query
+                    final filteredNotes = noteProvider.notes.where((note) {
+                      return note.name
+                          .toLowerCase()
+                          .contains(_searchQuery.toLowerCase());
+                    }).toList();
+                    final noteData = filteredNotes[index];
                     final noteId = noteData.noteId;
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0, vertical: 8.0),
+                        horizontal: 10.0,
+                        vertical: 8.0,
+                      ),
                       child: NewCard(noteId: noteId),
                     );
                   },
-                  childCount: noteProvider.notes.length,
+                  childCount: _searchQuery
+                          .isNotEmpty // Show notes only if there's a search query
+                      ? noteProvider.notes
+                          .where((note) => note.name
+                              .toLowerCase()
+                              .contains(_searchQuery.toLowerCase()))
+                          .length
+                      : noteProvider.notes.length,
                 ),
               ),
             ],
