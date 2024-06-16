@@ -165,10 +165,6 @@ class _HomePageBodyState extends State<HomePageBody> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (noteProvider.notes.isEmpty) {
-          return const Center(child: Text("No notes available"));
-        }
-
         // return FutureBuilder<void>(
         //   future: Future.delayed(Duration(seconds: 2)), // 2-second delay
         //   builder: (context, snapshot) {

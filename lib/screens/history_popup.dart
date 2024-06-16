@@ -33,20 +33,17 @@ class HistoryPopUp {
                 const SizedBox(height: 20),
                 _buildDetailRow(
                     'Principal Amount:', '₹${historyData.principalAmount}'),
-                _buildDetailRow(
-                    'Interest Rate:', '${historyData.interestRate / 12}Rs'),
+                _buildDetailRow('Interest Rate:',
+                    '${historyData.interestRate / 12 * 100}Rs'),
                 _buildDetailRow('From Date:', formattedFromDate),
                 _buildDetailRow('Till Date:', formattedTillDate),
-                _buildDetailRow(
-                    'Duration:',
-                    _calculateDuration(
-                        historyData.fromDate, historyData.tillDate)),
-                _buildDetailRow(
-                    'Interest Earned:', '₹${historyData.interestEarned}'),
+                _buildDetailRow('Duration:', historyData.duration),
+                _buildDetailRow('Interest Earned:',
+                    '₹${historyData.interestEarned.toStringAsFixed(2)}'),
                 const SizedBox(height: 10),
                 const Divider(), // Visual separation
                 _buildDetailRow('Total Amount:',
-                    '₹${historyData.principalAmount + historyData.interestEarned}',
+                    '₹${historyData.totalAmount.toStringAsFixed(2)}',
                     isTotal: true),
                 const SizedBox(height: 20),
                 // Action buttons

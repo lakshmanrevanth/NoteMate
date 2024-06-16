@@ -17,6 +17,7 @@ class CreateNotePage extends StatefulWidget {
 }
 
 class _CreateNotePageState extends State<CreateNotePage> {
+  bool isLoading = false;
   final _nameController = TextEditingController();
   final _principalAmountController = TextEditingController();
   final _interestRateController = TextEditingController();
@@ -54,6 +55,9 @@ class _CreateNotePageState extends State<CreateNotePage> {
   }
 
   void _saveNote() async {
+    setState(() {
+      isLoading = true; // Show loading indicator
+    });
     final authProvider =
         Provider.of<authprovider.AuthProvider>(context, listen: false);
 
@@ -68,13 +72,60 @@ class _CreateNotePageState extends State<CreateNotePage> {
       List<String> imageUrls = [];
       if (_selectedimages != null) {
         for (var image in _selectedimages!) {
-          final ref = firebase_storage.FirebaseStorage.instance.ref().child(
-              'notes/${authProvider.user!.uid}/${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}');
-          await ref.putFile(image);
-          final url = await ref.getDownloadURL();
-          imageUrls.add(url);
+          try {
+            // ... (create storage reference) ...
+            final fileName =
+                '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
+            final ref = firebase_storage.FirebaseStorage.instance
+                .ref()
+                .child('notes/${authProvider.user!.uid}/$fileName');
+            final uploadTask = ref.putFile(image);
+
+            // Monitor upload progress
+            uploadTask.snapshotEvents.listen((taskSnapshot) {
+              switch (taskSnapshot.state) {
+                case firebase_storage.TaskState.running:
+                  // Update progress in UI
+                  print(
+                      'Upload is ${taskSnapshot.bytesTransferred}/${taskSnapshot.totalBytes} done');
+                  break;
+                case firebase_storage.TaskState.paused:
+                  // ... handle paused state
+                  break;
+                case firebase_storage.TaskState.success:
+                  // Upload complete
+                  break;
+                // ... handle other states ...
+                case firebase_storage.TaskState.canceled:
+                // TODO: Handle this case.
+                case firebase_storage.TaskState.error:
+                // TODO: Handle this case.
+              }
+            });
+
+            await uploadTask; // Wait for the upload to finish
+            final url = await ref.getDownloadURL();
+            imageUrls.add(url);
+          } catch (e) {
+            // Handle the specific error (e.g., FirebaseException)
+            if (e is firebase_storage.FirebaseException &&
+                e.code == 'canceled') {
+              // Upload was canceled; you can retry here if desired
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Image upload canceled')),
+              );
+            } else {
+              print('Error uploading image: $e');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error uploading image: $e')),
+              );
+            }
+          }
         }
       }
+      setState(() {
+        isLoading = false; // Show loading indicator
+      });
 
       DateTime fromDate = _fromDateController.text != ''
           ? DateFormat('dd/MM/yyyy').parse(_fromDateController.text)
@@ -135,203 +186,216 @@ class _CreateNotePageState extends State<CreateNotePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 800,
-      width: double.infinity,
-      child: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Stack(
+      children: [
+        SizedBox(
+          height: 800,
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Create A Note",
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                TextButton(
-                  onPressed: _clearFields,
-                  child: const Text(
-                    "Clear",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            TextField(
-              controller: _nameController,
-              keyboardType: TextInputType.name,
-              decoration: const InputDecoration(
-                label: Text("Enter Name"),
-                hintText: "Name",
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: TextField(
-                    controller: _principalAmountController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      label: Text("Enter Principal Amount"),
-                      hintText: "100000",
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  flex: 1,
-                  child: TextField(
-                    controller: _interestRateController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      label: Text("Interest Rate"),
-                      hintText: "In rupees",
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      "Pick A Date",
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 15,
-                ),
-                Expanded(
-                  flex: 2,
-                  child: TextField(
-                    controller: _fromDateController,
-                    keyboardType: TextInputType.datetime,
-                    decoration: const InputDecoration(
-                      hintText: "dd/mm/yyyy",
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                fixedSize: const Size(double.infinity, double.minPositive),
-                backgroundColor: const Color(0xFF8B3DFF),
-                shape: const RoundedRectangleBorder(),
-              ),
-              onPressed: () {
-                _imagePickingFromGallery();
-              },
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Upload Images',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Icon(Icons.image, color: Colors.white),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            _selectedimages != null
-                ? Expanded(
-                    child: GridView.builder(
-                      scrollDirection: Axis.horizontal,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
-                      itemCount: _selectedimages!.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            _showFullScreenImage(_selectedimages![index]);
-                          },
-                          child: Image.file(
-                            _selectedimages![index],
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                : const Text("Please select images"),
-            const Expanded(
-              child: SizedBox(),
-            ),
-            SizedBox(
-              width: double.infinity,
-              height: 60,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      WidgetStateColor.resolveWith((states) => Colors.green),
-                ),
-                onPressed: () {
-                  _saveNote();
-                },
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Save Note",
+                    const Text(
+                      "Create A Note",
                       style: TextStyle(
+                        fontSize: 25,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                        fontSize: 15,
                       ),
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Icon(
-                      Icons.save,
-                      color: Colors.white,
+                    TextButton(
+                      onPressed: _clearFields,
+                      child: const Text(
+                        "Clear",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
+                TextField(
+                  controller: _nameController,
+                  keyboardType: TextInputType.name,
+                  decoration: const InputDecoration(
+                    label: Text("Enter Name"),
+                    hintText: "Name",
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: TextField(
+                        controller: _principalAmountController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          label: Text("Enter Principal Amount"),
+                          hintText: "100000",
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: TextField(
+                        controller: _interestRateController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          label: Text("Interest Rate"),
+                          hintText: "In rupees",
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          "Pick A Date",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: TextField(
+                        controller: _fromDateController,
+                        keyboardType: TextInputType.datetime,
+                        decoration: const InputDecoration(
+                          hintText: "dd/mm/yyyy",
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: const Size(double.infinity, double.minPositive),
+                    backgroundColor: const Color(0xFF8B3DFF),
+                    shape: const RoundedRectangleBorder(),
+                  ),
+                  onPressed: () {
+                    _imagePickingFromGallery();
+                  },
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Upload Images',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Icon(Icons.image, color: Colors.white),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                _selectedimages != null
+                    ? Expanded(
+                        child: GridView.builder(
+                          scrollDirection: Axis.horizontal,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                          ),
+                          itemCount: _selectedimages!.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                _showFullScreenImage(_selectedimages![index]);
+                              },
+                              child: Image.file(
+                                _selectedimages![index],
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    : const Text("Please select images"),
+                const Expanded(
+                  child: SizedBox(),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: WidgetStateColor.resolveWith(
+                          (states) => Colors.green),
+                    ),
+                    onPressed: () {
+                      _saveNote();
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Save Note",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            fontSize: 15,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Icon(
+                          Icons.save,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+        if (isLoading) // Show the progress indicator if isLoading is true
+          Positioned.fill(
+            // Position the indicator in the center
+            child: Container(
+              color:
+                  Colors.black.withOpacity(0.5), // Semi-transparent background
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+          ),
+      ],
     );
   }
 
