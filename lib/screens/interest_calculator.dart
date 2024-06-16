@@ -114,14 +114,6 @@ class _InterestCalculatorPageState extends State<InterestCalculatorPage> {
           .collection('interestcalculationhistory')
           .add(historydata.toMap());
 
-      // Update local history list and clear fields
-      // setState(() {
-      //   _history.add(historydata);
-      //   // Only show the popup if there are calculations in the history
-      //   if (_history.isNotEmpty) {
-      //     HistoryPopUp().showHistoryDialog(context, _history.last);
-      //   }
-      // });
       setState(() {
         _history.add(historydata);
       });

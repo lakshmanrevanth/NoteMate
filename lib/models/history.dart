@@ -70,6 +70,6 @@ class HistoryModel extends StatelessWidget {
 
   String _calculateDuration(DateTime fromDate, DateTime tillDate) {
     final difference = tillDate.difference(fromDate);
-    return '${difference.inDays ~/ 365} years ${(difference.inDays % 365) ~/ 30} months';
+    return '${difference.inDays ~/ 365} years ${(difference.inDays % 365) ~/ 30} months ${(difference.inDays % 365) % 30} days'; // Added days calculation
   }
 }

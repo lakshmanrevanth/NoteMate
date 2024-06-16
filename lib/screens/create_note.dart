@@ -51,7 +51,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
 
   String calculateDuration(DateTime fromDate, DateTime tillDate) {
     final difference = tillDate.difference(fromDate);
-    return '${difference.inDays ~/ 365} years ${(difference.inDays % 365) ~/ 30} months';
+    return '${difference.inDays ~/ 365} years ${(difference.inDays % 365) ~/ 30} months ${(difference.inDays % 365) % 30} days'; // Added days calculation
   }
 
   void _saveNote() async {
@@ -412,12 +412,6 @@ class _CreateNotePageState extends State<CreateNotePage> {
       );
     }
   }
-
-  // void _clearImageFields() {
-  //   setState(() {
-  //     _selectedimages!.clear();
-  //   });
-  // }
 
   void _showFullScreenImage(File imageFile) {
     showDialog(

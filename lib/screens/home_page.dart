@@ -5,6 +5,7 @@ import 'package:promissorynotemanager/dataprovider/authprovider.dart'
     as authprovider;
 import 'package:promissorynotemanager/models/card.dart';
 import 'package:promissorynotemanager/screens/create_note.dart';
+import 'package:promissorynotemanager/screens/details_page.dart';
 import 'package:promissorynotemanager/screens/drawer_page.dart';
 import 'package:promissorynotemanager/screens/interest_calculator.dart';
 import 'package:promissorynotemanager/screens/notification_page.dart';
@@ -245,25 +246,37 @@ class _HomePageBodyState extends State<HomePageBody> {
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
-                    // Filter notes based on the search query
                     final filteredNotes = noteProvider.notes.where((note) {
                       return note.name
                           .toLowerCase()
                           .contains(_searchQuery.toLowerCase());
                     }).toList();
-                    final noteData = filteredNotes[index];
-                    final noteId = noteData.noteId;
+                    final noteData = _searchQuery.isNotEmpty
+                        ? filteredNotes[
+                            index] // Use filteredNotes if there's a search query
+                        : noteProvider.notes[index]; // Use all notes otherwise
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10.0,
                         vertical: 8.0,
                       ),
-                      child: NewCard(noteId: noteId),
+                      child: NewCard(
+                        noteData: noteData,
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) =>
+                                DetailsPage(noteId: noteData.noteId),
+                          ).then((value) {
+                            // Optionally perform some action when the modal is closed
+                          });
+                        },
+                      ),
                     );
                   },
-                  childCount: _searchQuery
-                          .isNotEmpty // Show notes only if there's a search query
+                  childCount: _searchQuery.isNotEmpty
                       ? noteProvider.notes
                           .where((note) => note.name
                               .toLowerCase()
