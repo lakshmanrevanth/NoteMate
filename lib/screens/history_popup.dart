@@ -2,8 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:promissorynotemanager/data/history_data.dart';
 import 'package:google_fonts/google_fonts.dart'; // Add google_fonts package
 import 'package:intl/intl.dart';
+import 'package:promissorynotemanager/data/note_data.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HistoryPopUp {
+  void _shareNoteDetails(HistoryData noteData) async {
+    final textToShare = "Note Details:\n\n"
+        "Principal Amount: ₹${noteData.principalAmount}\n"
+        "Interest Rate: ${noteData.interestRate / 12 * 100}Rs\n"
+        "From Date: ${DateFormat('dd/MM/yyyy').format(noteData.fromDate)}\n"
+        "Till Date: ${DateFormat('dd/MM/yyyy').format(noteData.tillDate)}\n"
+        "Duration: ${noteData.duration}\n"
+        "Interest Earned: ₹${noteData.interestEarned.toStringAsFixed(2)}\n"
+        "Total Amount: ₹${noteData.totalAmount.toStringAsFixed(2)}";
+
+    // Optionally, share a screenshot of the page (you'll need to implement this separately)
+    // ...
+    await Share.share(
+        textToShare); // Use Share.share to initiate sharing dialog
+  }
+
   void showHistoryDialog(BuildContext context, HistoryData historyData) {
     final formattedFromDate =
         DateFormat('dd MMM yyyy').format(historyData.fromDate);
@@ -61,7 +79,7 @@ class HistoryPopUp {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // Add share functionality here (e.g., share as text or image)
+                        _shareNoteDetails(historyData);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue, // Custom button color

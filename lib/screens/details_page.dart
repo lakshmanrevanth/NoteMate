@@ -9,6 +9,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:promissorynotemanager/dataprovider/authprovider.dart'
     as authprovider;
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class DetailsPage extends StatefulWidget {
   final String noteId; // Receive noteId from the previous screen
@@ -50,6 +51,23 @@ class _DetailsPageState extends State<DetailsPage> {
       print("Error fetching note data: $e");
       // Handle errors appropriately (e.g., show a SnackBar)
     }
+  }
+
+  void _shareNoteDetails(NoteData noteData) async {
+    final textToShare = "Note Details:\n\n"
+        "Name: ${noteData.name}\n"
+        "Principal Amount: ₹${noteData.principalAmount.toStringAsFixed(2)}\n"
+        "Interest Rate: ${noteData.interestRate.toStringAsFixed(2)}Rs\n"
+        "From Date: ${DateFormat('dd/MM/yyyy').format(noteData.fromDate)}\n"
+        "Till Date: ${DateFormat('dd/MM/yyyy').format(noteData.tillDate)}\n"
+        "Duration: ${noteData.duration}\n"
+        "Interest Earned: ₹${noteData.interest.toStringAsFixed(2)}\n"
+        "Total Amount: ₹${noteData.totalAmount.toStringAsFixed(2)}";
+
+    // Optionally, share a screenshot of the page (you'll need to implement this separately)
+    // ...
+    await Share.share(
+        textToShare); // Use Share.share to initiate sharing dialog
   }
 
   Widget buildImagePreview(String imageUrl) {
@@ -210,7 +228,13 @@ class _DetailsPageState extends State<DetailsPage> {
               const SizedBox(height: 20),
               Center(
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    if (noteData != null) {
+                      _shareNoteDetails(noteData!);
+                    } else {
+                      // Handle the case where noteData is not yet loaded
+                    }
+                  },
                   icon: const Icon(Icons.ios_share, size: 30),
                 ),
               ),
