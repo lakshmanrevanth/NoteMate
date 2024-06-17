@@ -8,7 +8,7 @@
 
 
     <application
-        android:label="promissorynotemanager"
+        android:label="NoteMate"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

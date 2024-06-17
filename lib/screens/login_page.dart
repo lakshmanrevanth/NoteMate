@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:promissorynotemanager/screens/aunthentication_fail.dart';
 import 'package:promissorynotemanager/screens/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:promissorynotemanager/dataprovider/authprovider.dart'
@@ -88,6 +89,12 @@ class _LogInPageState extends State<LogInPage> {
                         );
                       } else {
                         print("Sign-in failed, not navigating.");
+                        Navigator.pushReplacement(
+                          // ignore: use_build_context_synchronously
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AuthenticationFail()),
+                        );
                       }
                     },
                     child: const Text("Continue with Google",

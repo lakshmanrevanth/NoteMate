@@ -182,6 +182,22 @@ class _CreateNotePageState extends State<CreateNotePage> {
     }
   }
 
+  Future<void> _pickDate() async {
+    final selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (selectedDate != null) {
+      setState(() {
+        _fromDateController.text =
+            DateFormat('dd/MM/yyyy').format(selectedDate);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -264,7 +280,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
                   children: [
                     Expanded(
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: _pickDate,
                         child: const Text(
                           "Pick A Date",
                           style: TextStyle(
