@@ -161,6 +161,7 @@ class HomePageBody extends StatefulWidget {
 }
 
 class _HomePageBodyState extends State<HomePageBody> {
+  String test = "";
   String _searchQuery = '';
   @override
   void initState() {
