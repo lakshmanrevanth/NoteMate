@@ -183,18 +183,25 @@ class _CreateNotePageState extends State<CreateNotePage> {
   }
 
   Future<void> _pickDate() async {
+    final now = DateTime.now(); // Get current date and time
     final selectedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: now, // Set initial date to today
       firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      lastDate: now, // Limit selection to today and before
     );
 
-    if (selectedDate != null) {
+    if (selectedDate != null && !selectedDate.isAfter(now)) {
+      // Check if selected date is not in the future
       setState(() {
         _fromDateController.text =
             DateFormat('dd/MM/yyyy').format(selectedDate);
       });
+    } else {
+      // Handle invalid date selection (optional)
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select a valid date.')),
+      );
     }
   }
 

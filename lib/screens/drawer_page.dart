@@ -123,15 +123,37 @@ class _DrawerPageState extends State<DrawerPage> {
           leading: const Icon(Icons.logout, color: Colors.red),
           title: const Text('Logout', style: TextStyle(color: Colors.red)),
           onTap: () async {
-            await authProvider.signOut();
-            // After sign-out, navigate back to LoginPage
-            if (!mounted) return; // Check if the widget is still mounted
-            Navigator.pushAndRemoveUntil(
-              // Replace navigation stack
-              context,
-              MaterialPageRoute(builder: (context) => const LogInPage()),
-              (route) => false, // Remove all previous routes
+            // Show a confirmation dialog
+            bool? confirm = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Logout'),
+                content: const Text('Are you sure you want to log out?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false), // Cancel
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true), // Confirm
+                    child: const Text('Logout'),
+                  ),
+                ],
+              ),
             );
+
+            if (confirm ?? false) {
+              // Check if the user confirmed logout
+              await authProvider.signOut();
+
+              // After sign-out, navigate back to LoginPage
+              if (!mounted) return;
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const LogInPage()),
+                (route) => false,
+              );
+            }
           },
         ),
       ],

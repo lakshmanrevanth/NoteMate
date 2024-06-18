@@ -33,6 +33,22 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (context) => CreateNotePage(
+              onAddNote: (NoteData note) {
+                setState(() {});
+              },
+            ),
+          ).then((value) {
+            setState(() {});
+          });
+        },
+        child: Icon(Icons.create),
+      ),
       key: scaffoldKey,
       appBar: AppBar(
         actions: [
@@ -165,6 +181,16 @@ class _HomePageBodyState extends State<HomePageBody> {
         if (noteProvider.isLoading) {
           // Show a loading indicator while fetching notes
           return const Center(child: CircularProgressIndicator());
+        }
+        if (noteProvider.notes.isEmpty) {
+          return const Center(
+            child: Text(
+              "No Notes Available",
+              style: TextStyle(
+                fontSize: 15,
+              ),
+            ),
+          );
         }
 
         // return FutureBuilder<void>(
