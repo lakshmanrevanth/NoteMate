@@ -1,4 +1,4 @@
-
+[![AskDeepWiki](https://deepwiki.com/badge.svg)](https:deepwiki.com/lakshmanrevanth/NoteMate)
 # NoteMate 📝
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
