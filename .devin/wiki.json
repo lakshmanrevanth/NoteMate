@@ -1,0 +1,301 @@
+{
+  "repo_notes": [
+    {
+      "content": ""
+    }
+  ],
+  "pages": [
+    {
+      "title": "NoteMate — Project Overview",
+      "purpose": "High-level introduction to NoteMate: what it does, its technology stack, key features, and how the major subsystems relate. Links to child pages for architecture and setup details.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Getting Started",
+      "purpose": "Step-by-step guide for cloning the repo, installing dependencies, configuring Firebase, and running the app on Android, iOS, macOS, Windows, Linux, and Web.",
+      "parent": "NoteMate — Project Overview",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Dependency Inventory",
+      "purpose": "Catalogue of all major Flutter/Dart packages used (Firebase suite, provider, image_picker, cached_network_image, share_plus, intl, etc.), explaining why each is included and how it fits into the architecture.",
+      "parent": "NoteMate — Project Overview",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Application Architecture",
+      "purpose": "Overview of the Flutter app's structural patterns: Provide    dsfsdfr-based state management, Firebase-as-a-backend, widget tree organisation, and navigation model. Links to child pages for each major layer.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "App Entrypoint and Routing",
+      "purpose": "Detailed walkthrough of lib/main.dart: Firebase initialisation, MultiProvider setup, ThemeProvider injection, and the Consumer-driven conditional routing between LogInPage and HomePage.",
+      "parent": "Application Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "State Management with Provider",
+      "purpose": "Explains the three ChangeNotifier providers — AuthProvider, ThemeProvider, and NoteProvider — their responsibilities, how they are scoped in the widget tree, and how widgets consume them.",
+      "parent": "Application Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Navigation and Drawer",
+      "purpose": "Covers the app's navigation model: the main Scaffold with BottomNavigationBar and IndexedStack, the DrawerPage side-menu (routes to Interest Calculator, Assets, Settings), sign-out flow, and the About dialog with url_launcher.",
+      "parent": "Application Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Core Features",
+      "purpose": "Overview of the four main user-facing features: note management, interest calculation, assets dashboard, and history. Links to child pages for each feature.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Note Management (Home Page)",
+      "purpose": "Deep dive into the HomePage and HomePageBody: NoteProvider data-fetching lifecycle, CustomScrollView with SliverList, search/filter logic, pull-to-refresh, and the NewCard list item widget.",
+      "parent": "Core Features",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Creating a Note",
+      "purpose": "Explains the CreateNotePage flow: form fields (name, principal, interest rate, from date), image picking via image_picker, Firebase Storage upload with progress tracking, interest/duration calculation formulas, and Firestore persistence under users/{uid}/notes.",
+      "parent": "Core Features",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Note Details and Sharing",
+      "purpose": "Covers the DetailsPage: async Firestore fetch by noteId, financial field display, CarouselSlider + PhotoView image gallery, interactive full-screen zoom, and the share_plus export of note details as formatted text.",
+      "parent": "Core Features",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Interest Calculator",
+      "purpose": "Documents the InterestCalculatorPage: input fields, the interest formula (principal × rate × duration/365), date validation, saving results to the interestcalculationhistory Firestore sub-collection, real-time StreamBuilder history list, and the HistoryPopUp dialog with share capability.",
+      "parent": "Core Features",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Assets Dashboard",
+      "purpose": "Describes the AssetsPage: how it aggregates totalPrincipal, totalInterest, and totalAmount across all notes in the user's Firestore collection, the gradient summary card UI, and loading/error states.",
+      "parent": "Core Features",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Data Models",
+      "purpose": "Reference page for all data classes used in the app, their fields, Firestore serialisation (toMap/fromMap), and how they flow between the UI and backend. Links to child pages for each model group.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "NoteData Model",
+      "purpose": "Full field-by-field reference for NoteData (name, principalAmount, interestRate, fromDate, tillDate, duration, interest, totalAmount, imageUrls, noteId), its toMap/fromMap Firestore contract, and how it is used by CreateNotePage, HomePage, DetailsPage, and AssetsPage.",
+      "parent": "Data Models",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "HistoryData Model and UI Components",
+      "purpose": "Reference for HistoryData (principalAmount, interestRate, fromDate, tillDate, interestEarned, totalAmount, duration), its Firestore serialisation, and the HistoryModel card widget that renders it including the interest-rate normalisation formula.",
+      "parent": "Data Models",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Firebase Backend",
+      "purpose": "Overview of the Firebase project configuration, Firestore data schema, Storage bucket usage, and Authentication setup. Links to child pages for each Firebase service.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Firestore Data Schema",
+      "purpose": "Documents the Firestore collection hierarchy: users/{uid} (profile fields), users/{uid}/notes/{noteId} (NoteData documents), and users/{uid}/interestcalculationhistory/{docId} (HistoryData documents). Includes field types and access patterns.",
+      "parent": "Firebase Backend",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Authentication Flow",
+      "purpose": "Explains the full Google Sign-In OAuth2 flow via AuthProvider: GoogleSignIn → FirebaseAuth credential exchange, user document creation/update in Firestore, authStateChanges listener, sign-out, and the AuthenticationFail fallback screen.",
+      "parent": "Firebase Backend",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Firebase Storage and Image Pipeline",
+      "purpose": "Covers the image handling pipeline: image_picker gallery selection, upload to Firebase Storage under notes/{uid}/{timestamp_filename}, TaskState progress monitoring, download URL retrieval, and display via CachedNetworkImage with CarouselSlider/PhotoView.",
+      "parent": "Firebase Backend",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Platform Integration",
+      "purpose": "Overview of how NoteMate targets Android, iOS, macOS, Windows, Linux, and Web. Covers platform-specific configurations, plugin registration, and any platform-specific limitations. Links to child pages per platform group.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Android Configuration",
+      "purpose": "Details the Android-specific setup: AndroidManifest.xml permissions (INTERNET, storage, QUERY_ALL_PACKAGES), intent filters (tel, mailto, https), FileProvider for secure file sharing, FCM notification channel, google-services.json, and build.gradle configuration.",
+      "parent": "Platform Integration",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "iOS and macOS Configuration",
+      "purpose": "Covers the iOS Runner (AppDelegate.swift, Info.plist, app icon asset catalogue) and macOS Runner (GeneratedPluginRegistrant.swift, plugin registration for Firebase, sqflite, file_selector, share_plus, url_launcher). Notes the shared iOS/macOS Firebase options.",
+      "parent": "Platform Integration",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Windows, Linux, and Web Configuration",
+      "purpose": "Documents the Windows runner (CMakeLists.txt, flutter_window.cpp, generated_plugin_registrant.cc), Linux flutter plugin cmake files, and the Web target (index.html, manifest.json, service worker setup). Notes Firebase Linux unsupported status.",
+      "parent": "Platform Integration",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "UI Theming and Settings",
+      "purpose": "Explains the ThemeProvider ChangeNotifier: dark/light mode toggle, SharedPreferences persistence of user preference, WidgetsBindingObserver for system brightness changes, and the SettingsPage switch widget.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Theme Provider",
+      "purpose": "Deep dive into ThemeProvider (lib/dataprovider/themeprovider.dart): isDarkMode state, toggleTheme(), _loadTheme() initialisation from SharedPreferences, didChangePlatformBrightness observer, and how MaterialApp consumes themeMode.",
+      "parent": "UI Theming and Settings",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Settings and Notification Pages",
+      "purpose": "Documents the SettingsPage (dark mode toggle via Consumer<ThemeProvider>) and the NotificationPage (placeholder 'No Notifications' screen), including how they are reached from the DrawerPage.",
+      "parent": "UI Theming and Settings",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Testing and Developer Tooling",
+      "purpose": "Covers the test directory (widget_test.dart), VS Code workspace settings, devtools_options.yaml, flutter_lints configuration, and flutter_launcher_icons build-time icon generation.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Widget Tests",
+      "purpose": "Explains the existing widget test in test/widget_test.dart, how to run tests with flutter test, and guidance for extending test coverage for key widgets like NewCard, CreateNotePage, and InterestCalculatorPage.",
+      "parent": "Testing and Developer Tooling",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Build Configuration and Tooling",
+      "purpose": "Documents flutter_launcher_icons (icon generation from lib/assets/images/logo.jpg), flutter_lints analysis_options, VS Code settings, devtools_options.yaml, and the pubspec.yaml dev_dependencies section.",
+      "parent": "Testing and Developer Tooling",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    }
+  ]
+}
